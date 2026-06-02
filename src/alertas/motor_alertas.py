@@ -39,6 +39,37 @@ import numpy as np
 
 logger = logging.getLogger(__name__)
 
+# ── MODOS DE OPERACIÓN ───────────────────────────────────────────────────────
+#
+# El sistema genera alertas en tres frecuencias distintas:
+#
+#   TIEMPO_REAL  → cada 10-15 min   → solo IoT
+#                  Alerta: temp colmena, HR, batería
+#                  Acción requerida en < 48h
+#
+#   SENTINEL     → cada 5 días      → nueva imagen Sentinel-2
+#                  Alerta: NDVI cayó, agua cambió
+#                  Acción requerida en < 1 semana
+#
+#   MENSUAL      → día 1 de cada mes → ERA5 + fenología + tendencias
+#                  Alerta: tendencia de escasez, reubicación, calendario
+#                  Acción requerida en < 1 mes
+#
+# Las alertas de TIEMPO_REAL son las más críticas para el bienestar
+# de la colmena. SENTINEL detecta cambios en el entorno. MENSUAL
+# permite planificación estratégica del apiario.
+
+MODO_TIEMPO_REAL = "TIEMPO_REAL"
+MODO_SENTINEL    = "SENTINEL"
+MODO_MENSUAL     = "MENSUAL"
+
+# Tipos de alerta por modo
+ALERTAS_POR_MODO = {
+    MODO_TIEMPO_REAL: ["VISITA_REINA", "BATERIA_BAJA", "OLA_CALOR"],
+    MODO_SENTINEL:    ["ALIMENTACION", "NO_ALIMENTAR", "AGUA", "OLA_CALOR"],
+    MODO_MENSUAL:     ["ALIMENTACION", "REUBICACION", "COSECHA", "PREPARACION"],
+}
+
 # ── NIVELES Y PRIORIDADES ─────────────────────────────────────────────────────
 
 NIVELES = {
@@ -385,62 +416,72 @@ def generar_alertas(
     n_colmenas:      int            = 1,
     apiario_id:      str            = "API_SJR_01",
     colmena_id:      str            = "C01",
+    modo:            str            = MODO_SENTINEL,
 ) -> list[Alerta]:
     """
     Genera todas las alertas aplicables para una fecha y apiario dados.
 
+    Args:
+        modo: TIEMPO_REAL (IoT c/15min) | SENTINEL (c/5días) | MENSUAL (c/mes)
+              Filtra qué tipos de alerta son relevantes según la frecuencia.
+
     Aplica la lógica de doble evidencia del plan V2:
-    Una sola señal → aviso (INFO/MEDIA)
-    Dos señales convergentes → alerta (ALTA)
-    Tres o más señales → urgente (URGENTE)
+        Una sola señal → aviso (INFO/MEDIA)
+        Dos señales convergentes → alerta (ALTA)
+        Tres o más señales → urgente (URGENTE)
 
     Returns:
         Lista de alertas ordenadas por prioridad descendente
     """
+    tipos_activos = ALERTAS_POR_MODO.get(modo, list(EMOJIS.keys()))
     alertas = []
 
-    # 1. Alerta de alimentación (satelital + IoT opcionales)
-    a = alerta_alimentacion(
-        ndvi, fase_feno, precip_mm, peso_cambio, apiario_id, fecha
-    )
-    if a:
-        alertas.append(a)
+    # 1. Alerta de alimentación (Sentinel + Mensual)
+    if "ALIMENTACION" in tipos_activos:
+        a = alerta_alimentacion(
+            ndvi, fase_feno, precip_mm, peso_cambio, apiario_id, fecha
+        )
+        if a:
+            alertas.append(a)
 
-    # 2. Alerta positiva: no alimentar
-    a = alerta_no_alimentar(ndvi, fase_feno, apiario_id, fecha)
-    if a:
-        alertas.append(a)
+    # 2. Alerta positiva: no alimentar (Sentinel)
+    if "NO_ALIMENTAR" in tipos_activos:
+        a = alerta_no_alimentar(ndvi, fase_feno, apiario_id, fecha)
+        if a:
+            alertas.append(a)
 
-    # 3. Alerta de agua
-    a = alerta_agua(pct_agua, precip_mm, n_colmenas, apiario_id, fecha)
-    if a:
-        alertas.append(a)
+    # 3. Alerta de agua (Sentinel)
+    if "AGUA" in tipos_activos:
+        a = alerta_agua(pct_agua, precip_mm, n_colmenas, apiario_id, fecha)
+        if a:
+            alertas.append(a)
 
-    # 4. Alerta de visita a reina (solo si hay IoT)
-    if temp_colmena is not None:
+    # 4. Alerta de visita a reina — solo Tiempo Real (IoT)
+    if "VISITA_REINA" in tipos_activos and temp_colmena is not None:
         a = alerta_visita_reina(
             temp_colmena, hr_interna, apiario_id, colmena_id, fecha
         )
         if a:
             alertas.append(a)
 
-    # 5. Alerta de reubicación
-    a = alerta_reubicacion(ndvi, fase_feno, n_dias_ndvi_bajo, apiario_id, fecha)
-    if a:
-        alertas.append(a)
+    # 5. Alerta de reubicación (Mensual)
+    if "REUBICACION" in tipos_activos:
+        a = alerta_reubicacion(ndvi, fase_feno, n_dias_ndvi_bajo, apiario_id, fecha)
+        if a:
+            alertas.append(a)
 
-    # 6. Alerta de ola de calor
-    a = alerta_ola_calor(tsup_anomalia, temp_colmena, apiario_id, fecha)
-    if a:
-        alertas.append(a)
+    # 6. Alerta de ola de calor (Sentinel + Tiempo Real)
+    if "OLA_CALOR" in tipos_activos:
+        a = alerta_ola_calor(tsup_anomalia, temp_colmena, apiario_id, fecha)
+        if a:
+            alertas.append(a)
 
     # Ordenar por prioridad descendente
     alertas.sort(key=lambda x: x.prioridad, reverse=True)
 
     logger.info(
-        f"🔔 {len(alertas)} alertas generadas para {fecha} | "
-        f"{apiario_id} | "
-        f"max_nivel={alertas[0].nivel if alertas else 'N/A'}"
+        f"🔔 [{modo}] {len(alertas)} alertas | {fecha} | {apiario_id} | "
+        f"max={alertas[0].nivel if alertas else 'N/A'}"
     )
     return alertas
 
