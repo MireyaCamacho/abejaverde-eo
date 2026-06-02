@@ -1,0 +1,57 @@
+# Variables de entorno — NUNCA subir al repo
+.env
+
+# Datos crudos — son pesados, van en .gitignore
+# Solo se suben los datos procesados pequeños
+data/raw/copernicus/
+data/raw/ideam/
+data/raw/iot/colmena_real/
+data/raw/iot/beep_base/
+data/raw/datos_gov_co/
+
+# Sí se suben los datos de referencia y procesados pequeños
+!data/reference/
+!data/processed/.gitkeep
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Entornos virtuales
+.venv/
+venv/
+env/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# MacOS
+.DS_Store
+
+# Archivos grandes de datos
+*.nc
+*.tif
+*.tiff
+*.geotiff
+*.h5
+*.hdf5
+
+# Logs
+*.log
+logs/
+
+# Streamlit
+.streamlit/secrets.toml
