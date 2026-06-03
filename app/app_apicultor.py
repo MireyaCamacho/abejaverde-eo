@@ -15,27 +15,40 @@ st.set_page_config(page_title="AbejaVerde — Mi Apiario", page_icon="🐝", lay
 
 st.markdown("""
 <style>
-.hdr{background:#132610;padding:16px 20px;border-radius:12px;
-     display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.hdr-t{color:#F5A623;font-size:18px;font-weight:500}
-.hdr-s{color:#9FE1CB;font-size:12px;margin-top:2px}
-.ira-box{background:#132610;border-radius:14px;padding:18px;margin-bottom:14px}
-.ac-v{background:#EAF3DE;border-left:4px solid #3B6D11;border-radius:0 10px 10px 0;padding:13px 15px;margin-bottom:9px}
-.ac-a{background:#FAEEDA;border-left:4px solid #F5A623;border-radius:0 10px 10px 0;padding:13px 15px;margin-bottom:9px}
-.ac-b{background:#E6F1FB;border-left:4px solid #185FA5;border-radius:0 10px 10px 0;padding:13px 15px;margin-bottom:9px}
-.tit-v{color:#173404;font-size:13px;font-weight:500}
-.tit-a{color:#412402;font-size:13px;font-weight:500}
-.tit-b{color:#042C53;font-size:13px;font-weight:500}
-.txt-v{color:#27500A;font-size:12px;line-height:1.6;margin-top:4px}
-.txt-a{color:#633806;font-size:12px;line-height:1.6;margin-top:4px}
-.txt-b{color:#185FA5;font-size:12px;line-height:1.6;margin-top:4px}
-.sat-card{background:#132610;border-radius:11px;padding:14px;margin-bottom:10px}
-.mision-box{background:#132610;border-radius:12px;padding:15px;margin-bottom:12px}
-.puente-box{background:#FAEEDA;border-radius:12px;padding:14px;margin-bottom:12px;border:.5px solid #FAC775}
-.frase-box{background:#132610;border-radius:12px;padding:16px;text-align:center;margin-top:8px}
-.team-card{background:white;border-radius:12px;border:.5px solid #D3D1C7;overflow:hidden;margin-bottom:8px}
-.piloto{background:#EAF3DE;color:#27500A;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:500}
-.demo{background:#FAEEDA;color:#633806;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:500}
+/* BASE — letra grande para apicultores mayores */
+html, body, [class*="css"] { font-size: 17px !important; }
+.hdr{background:#132610;padding:18px 20px;border-radius:12px;
+     display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.hdr-t{color:#F5A623;font-size:22px;font-weight:500}
+.hdr-s{color:#9FE1CB;font-size:14px;margin-top:3px}
+.ira-box{background:#132610;border-radius:14px;padding:20px;margin-bottom:16px}
+.ac-v{background:#EAF3DE;border-left:5px solid #3B6D11;border-radius:0 10px 10px 0;padding:16px 18px;margin-bottom:11px}
+.ac-a{background:#FAEEDA;border-left:5px solid #F5A623;border-radius:0 10px 10px 0;padding:16px 18px;margin-bottom:11px}
+.ac-b{background:#E6F1FB;border-left:5px solid #185FA5;border-radius:0 10px 10px 0;padding:16px 18px;margin-bottom:11px}
+.tit-v{color:#173404;font-size:17px;font-weight:600}
+.tit-a{color:#412402;font-size:17px;font-weight:600}
+.tit-b{color:#042C53;font-size:17px;font-weight:600}
+.txt-v{color:#27500A;font-size:15px;line-height:1.7;margin-top:5px}
+.txt-a{color:#633806;font-size:15px;line-height:1.7;margin-top:5px}
+.txt-b{color:#185FA5;font-size:15px;line-height:1.7;margin-top:5px}
+.sat-card{background:#132610;border-radius:11px;padding:16px;margin-bottom:12px}
+.mision-box{background:#132610;border-radius:12px;padding:16px;margin-bottom:14px}
+.puente-box{background:#FAEEDA;border-radius:12px;padding:16px;margin-bottom:14px;border:.5px solid #FAC775}
+.frase-box{background:#132610;border-radius:12px;padding:18px;text-align:center;margin-top:10px}
+.team-card{background:white;border-radius:12px;border:.5px solid #D3D1C7;overflow:hidden;margin-bottom:10px}
+.piloto{background:#EAF3DE;color:#27500A;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:500}
+.demo{background:#FAEEDA;color:#633806;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:500}
+/* Métricas más grandes */
+[data-testid="stMetricValue"] { font-size: 2.2rem !important; }
+[data-testid="stMetricLabel"] { font-size: 1rem !important; }
+/* Selectbox más grande */
+.stSelectbox select { font-size: 16px !important; }
+/* Botones más grandes */
+.stButton button { font-size: 16px !important; padding: 12px 20px !important; }
+/* Tabs más grandes */
+.stTabs [data-baseweb="tab"] { font-size: 15px !important; padding: 10px 16px !important; }
+/* Chat input más grande */
+.stChatInput textarea { font-size: 16px !important; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -117,7 +130,7 @@ with tab1:
     c = "#A32D2D" if s>66 else "#854F0B" if s>33 else "#3B6D11"
     bg= "#FCEBEB" if s>66 else "#FAEEDA" if s>33 else "#EAF3DE"
     chips_html = "".join(f'<span style="background:#1A3A1A;color:#9FE1CB;padding:2px 7px;border-radius:20px;font-size:10px;margin-right:4px">{ch}</span>' for ch in muni["chips"])
-    st.markdown(f'<div class="ira-box"><div style="display:flex;align-items:center;gap:16px"><div style="width:70px;height:70px;border-radius:50%;background:{bg};border:3px solid {c};display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0"><div style="font-size:1.6rem;font-weight:500;color:{c};line-height:1">{s}</div><div style="font-size:9px;color:{c};font-weight:500">IRA</div></div><div><div style="color:#F5A623;font-size:15px;font-weight:500;margin-bottom:3px">{muni["titulo"]}</div><div style="color:#9FE1CB;font-size:12px;line-height:1.4;margin-bottom:6px">{muni["desc"]}</div>{chips_html}</div></div></div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="ira-box"><div style="display:flex;align-items:center;gap:18px"><div style="width:90px;height:90px;border-radius:50%;background:{bg};border:4px solid {c};display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0"><div style="font-size:2.2rem;font-weight:600;color:{c};line-height:1">{s}</div><div style="font-size:11px;color:{c};font-weight:600">IRA</div></div><div><div style="color:#F5A623;font-size:18px;font-weight:600;margin-bottom:4px">{muni["titulo"]}</div><div style="color:#9FE1CB;font-size:14px;line-height:1.5;margin-bottom:7px">{muni["desc"]}</div>{chips_html}<div style="color:#5F5E5A;font-size:11px;margin-top:8px">🛰 Calculado con datos Sentinel-2 mayo 2025 · Se actualiza cada 5 días con nueva imagen</div></div></div></div>', unsafe_allow_html=True)
 
     st.markdown("**Alertas de hoy**")
     if muni["real"]:
