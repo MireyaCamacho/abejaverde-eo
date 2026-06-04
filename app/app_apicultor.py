@@ -53,7 +53,7 @@ html, body, [class*="css"] { font-size: 17px !important; }
 """, unsafe_allow_html=True)
 
 MUNICIPIOS = {
-    "San Juan de Rioseco ⭐ Piloto":{"ira":32,"titulo":"Riesgo moderado","desc":"Floración activa en mayo 2026. Monitoree el agua y prepárese para la cosecha.","chips":["🌿 Floración activa","🌡️ Diciembre crítico","📅 29 meses datos"],"real":True},
+    "San Juan de Rioseco ⭐ Piloto":{"ira":32,"titulo":"Riesgo moderado","desc":"Floración activa mayo 2026 (NDVI 0.667). ITA=35, IBA=31. Prepárese para la cosecha.","chips":["🌿 Floración activa","🛰️ ITA 35","👩‍🌾 IBA 31"],"real":True},
     "Guaduas":{"ira":28,"titulo":"Condiciones favorables","desc":"Buen mes. Monitoreo rutinario.","chips":["🌿 Vegetación alta"],"real":False},
     "Chaguaní":{"ira":52,"titulo":"Riesgo moderado-alto","desc":"Déficit hídrico persistente.","chips":["💧 Agua crítica","🌡️ Calor alto"],"real":False},
     "Beltrán":{"ira":44,"titulo":"Riesgo moderado","desc":"Floración activa pero agua escasa.","chips":["🌿 Floración","💧 Agua baja"],"real":False},
@@ -118,7 +118,7 @@ if nuevo_muni != st.session_state.muni:
     st.session_state.muni = nuevo_muni
     st.rerun()
 muni = MUNICIPIOS[st.session_state.muni]
-badge = '<span class="piloto">⭐ Datos reales Copernicus · 17 meses procesados</span>' if muni["real"] else '<span class="demo">Demo · Proyección regional</span>'
+badge = '<span class="piloto">⭐ Datos reales Copernicus · 29 meses procesados</span>' if muni["real"] else '<span class="demo">Demo · Proyección regional</span>'
 st.markdown(badge, unsafe_allow_html=True)
 st.divider()
 
@@ -220,8 +220,45 @@ with tab3:
         st.metric("Batería LiPo", f"{iot['bateria_v']:.2f}V")
     st.divider()
     st.markdown("**Datos satelitales Copernicus**")
-    st.markdown('<div class="sat-card"><div style="color:#9FE1CB;font-size:10px;font-weight:500;margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px">29 meses reales · openEO / CDSE · San Juan de Rioseco · Ene 2024 – May 2026</div><div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:.5px solid #1A3A1A;font-size:12px"><span style="color:#9FE1CB">NDVI mayo 2026</span><span style="color:#5DCAA5;font-weight:500">0.667 — Floración activa</span></div><div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:.5px solid #1A3A1A;font-size:12px"><span style="color:#9FE1CB">Pico histórico</span><span style="color:#5DCAA5;font-weight:500">0.817 — Jun 2024</span></div><div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:.5px solid #1A3A1A;font-size:12px"><span style="color:#9FE1CB">Mínimo histórico</span><span style="color:#F09595;font-weight:500">0.313 — Dic 2025 (crítico)</span></div><div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:.5px solid #1A3A1A;font-size:12px"><span style="color:#9FE1CB">Feb 2026</span><span style="color:#5DCAA5;font-weight:500">0.782 — Floración alta</span></div><div style="display:flex;justify-content:space-between;padding:5px 0;font-size:12px"><span style="color:#9FE1CB">IRA Score</span><span style="color:#F5A623;font-weight:500">32/100 — Moderado</span></div></div>', unsafe_allow_html=True)
-    st.caption("Sentinel-2 + Sentinel-1 SAR + ERA5 · Copernicus Data Space · openEO")
+    st.markdown('''<div class="sat-card">
+      <div style="color:#9FE1CB;font-size:10px;font-weight:500;margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px">
+        29 meses reales · openEO / CDSE · San Juan de Rioseco · Ene 2024 – May 2026
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:.5px solid #1A3A1A;font-size:13px">
+        <span style="color:#9FE1CB">NDVI mayo 2026</span><span style="color:#5DCAA5;font-weight:500">0.667 — Floración activa</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:.5px solid #1A3A1A;font-size:13px">
+        <span style="color:#9FE1CB">Pico histórico</span><span style="color:#5DCAA5;font-weight:500">0.817 — Jun 2024</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:.5px solid #1A3A1A;font-size:13px">
+        <span style="color:#F09595">Mínimo histórico</span><span style="color:#F09595;font-weight:500">0.313 — Dic 2025 ⚠️</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:.5px solid #1A3A1A;font-size:13px">
+        <span style="color:#9FE1CB">Feb 2026</span><span style="color:#5DCAA5;font-weight:500">0.782 — Floración alta</span>
+      </div>
+      <div style="margin-top:10px;padding-top:8px;border-top:.5px solid #2A3A2A">
+        <div style="color:#F5A623;font-size:11px;font-weight:500;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px">
+          Índices Arelys Camacho (mayo 2026)
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div style="background:#1A3A1A;border-radius:8px;padding:8px;text-align:center">
+            <div style="color:#F5A623;font-size:1.3rem;font-weight:500">35</div>
+            <div style="color:#9FE1CB;font-size:10px">ITA — Satélite</div>
+            <div style="color:#EF9F27;font-size:10px">Moderado</div>
+          </div>
+          <div style="background:#1A3A1A;border-radius:8px;padding:8px;text-align:center">
+            <div style="color:#F5A623;font-size:1.3rem;font-weight:500">31</div>
+            <div style="color:#9FE1CB;font-size:10px">IBA — Campo</div>
+            <div style="color:#EF9F27;font-size:10px">Moderado</div>
+          </div>
+        </div>
+        <div style="color:#9FE1CB;font-size:11px;margin-top:7px;line-height:1.5">
+          ITA y IBA convergentes — condiciones similares en satélite y campo.
+          Floración activa reduce el riesgo. Monitoree el agua.
+        </div>
+      </div>
+    </div>''', unsafe_allow_html=True)
+    st.caption("Sentinel-2 (NDVI/NDMI) + ERA5 (LST) · ITA/IBA propuesto por Arelys Camacho · openEO / CDSE")
 
 # ─── TAB 4 ASESORA ───────────────────────────────────────────────────────────
 with tab4:
