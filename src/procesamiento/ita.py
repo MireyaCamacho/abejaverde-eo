@@ -1,8 +1,8 @@
 """
 AbejaVerde·EO — Módulo: ita
 =============================
-Índice de Alerta Temprana Apícola (ITA)
-Propuesto por Arelys Camacho — apicultora piloto San Juan de Rioseco
+ITA — Índice de Alerta Temprana Apícola
+AbejaVerde·EO — sistema de alertas apícolas con inteligencia satelital
 
 0 = Sin riesgo | 100 = Riesgo máximo
 
@@ -197,7 +197,7 @@ def calcular_ita(
     peso_lst:       float = PESO_LST_DEFAULT,
 ) -> ResultadoITA:
     """
-    Calcula el Índice de Alerta Temprana Apícola (ITA).
+    Calcula el ITA — Índice de Alerta Temprana Apícola.
 
     Args:
         ndvi_actual:     NDVI del mes actual (Sentinel-2)
@@ -321,7 +321,7 @@ if __name__ == "__main__":
 
     print("═" * 55)
     print("  AbejaVerde·EO — ITA (Índice de Alerta Temprana Apícola)")
-    print("  Propuesto por Arelys Camacho · San Juan de Rioseco")
+    print("  AbejaVerde·EO · San Juan de Rioseco")
     print("═" * 55)
 
     # Datos reales 29 meses SJR

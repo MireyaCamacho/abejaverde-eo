@@ -53,7 +53,7 @@ html, body, [class*="css"] { font-size: 17px !important; }
 """, unsafe_allow_html=True)
 
 MUNICIPIOS = {
-    "San Juan de Rioseco ⭐ Piloto":{"ira":32,"titulo":"Riesgo moderado","desc":"Floración activa mayo 2026 (NDVI 0.667). ITA=35, IBA=31. Prepárese para la cosecha.","chips":["🌿 Floración activa","🛰️ ITA 35","👩‍🌾 IBA 31"],"real":True},
+    "San Juan de Rioseco ⭐ Piloto":{"ira":32,"titulo":"Riesgo moderado","desc":"Floración activa mayo 2026 (NDVI 0.667). ITA=35, IBA=31. Prepárese para la cosecha.","chips":["🌿 Floración activa","🛰️ ITA 35 (alerta temprana)","👩‍🌾 IBA 31 (bioindicación)"],"real":True},
     "Guaduas":{"ira":28,"titulo":"Condiciones favorables","desc":"Buen mes. Monitoreo rutinario.","chips":["🌿 Vegetación alta"],"real":False},
     "Chaguaní":{"ira":52,"titulo":"Riesgo moderado-alto","desc":"Déficit hídrico persistente.","chips":["💧 Agua crítica","🌡️ Calor alto"],"real":False},
     "Beltrán":{"ira":44,"titulo":"Riesgo moderado","desc":"Floración activa pero agua escasa.","chips":["🌿 Floración","💧 Agua baja"],"real":False},
@@ -238,17 +238,17 @@ with tab3:
       </div>
       <div style="margin-top:10px;padding-top:8px;border-top:.5px solid #2A3A2A">
         <div style="color:#F5A623;font-size:11px;font-weight:500;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px">
-          Índices Arelys Camacho (mayo 2026)
+          ITA · Índice de Alerta Temprana Apícola — IBA · Índice de Bioindicación Apícola
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
           <div style="background:#1A3A1A;border-radius:8px;padding:8px;text-align:center">
             <div style="color:#F5A623;font-size:1.3rem;font-weight:500">35</div>
-            <div style="color:#9FE1CB;font-size:10px">ITA — Satélite</div>
+            <div style="color:#9FE1CB;font-size:10px">ITA — Alerta Temprana</div>
             <div style="color:#EF9F27;font-size:10px">Moderado</div>
           </div>
           <div style="background:#1A3A1A;border-radius:8px;padding:8px;text-align:center">
             <div style="color:#F5A623;font-size:1.3rem;font-weight:500">31</div>
-            <div style="color:#9FE1CB;font-size:10px">IBA — Campo</div>
+            <div style="color:#9FE1CB;font-size:10px">IBA — Bioindicación</div>
             <div style="color:#EF9F27;font-size:10px">Moderado</div>
           </div>
         </div>
@@ -258,7 +258,7 @@ with tab3:
         </div>
       </div>
     </div>''', unsafe_allow_html=True)
-    st.caption("Sentinel-2 (NDVI/NDMI) + ERA5 (LST) · ITA/IBA propuesto por Arelys Camacho · openEO / CDSE")
+    st.caption("Sentinel-2 (NDVI/NDMI) + ERA5 (LST) · ITA/IBA AbejaVerde·EO · openEO / CDSE")
 
 # ─── TAB 4 ASESORA ───────────────────────────────────────────────────────────
 with tab4:

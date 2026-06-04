@@ -1,8 +1,8 @@
 """
 AbejaVerde·EO — Módulo: iba
 =============================
-Índice de Bioindicación Apícola (IBA)
-Propuesto por Arelys Camacho — apicultora piloto San Juan de Rioseco
+IBA — Índice de Bioindicación Apícola
+AbejaVerde·EO — sistema de alertas apícolas con inteligencia satelital
 
 0 = Sin riesgo | 100 = Riesgo máximo
 
@@ -175,7 +175,7 @@ def calcular_iba(
     notas:           str   = "",
 ) -> ResultadoIBA:
     """
-    Calcula el Índice de Bioindicación Apícola (IBA).
+    Calcula el IBA — Índice de Bioindicación Apícola.
 
     Args:
         entrada_polen:  valor o texto ("alta", "moderada", "baja", "muy baja", "nula")
@@ -317,7 +317,7 @@ if __name__ == "__main__":
 
     print("═" * 60)
     print("  AbejaVerde·EO — IBA (Índice de Bioindicación Apícola)")
-    print("  Propuesto por Arelys Camacho · San Juan de Rioseco")
+    print("  AbejaVerde·EO · San Juan de Rioseco")
     print("═" * 60)
 
     # Escenarios reales del apiario
