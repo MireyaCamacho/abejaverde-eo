@@ -1,0 +1,5 @@
+content = open('app/app_apicultor.py', encoding='utf-8').read() 
+content = content.replace('parse_dates=["timestamp"], on_bad_lines="skip")', 'on_bad_lines="skip")') 
+content = content.replace("pd.Timestamp(iot['timestamp']).strftime", "str(iot['timestamp'])[:16]") 
+open('app/app_apicultor.py', 'w', encoding='utf-8').write(content) 
+print('Listo') 

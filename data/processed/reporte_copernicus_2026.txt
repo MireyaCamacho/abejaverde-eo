@@ -1,0 +1,60 @@
+
+═══════════════════════════════════════════════════════════
+REPORTE COPERNICUS — COLMENA INTELIGENTE
+Apiario AbejaVerde·EO — San Juan de Rioseco
+Generado: 2026-06-03 21:50
+Origen NDVI: DATOS REALES — procesados con openEO / Copernicus Data Space
+═══════════════════════════════════════════════════════════
+
+APIARIO
+  Coordenadas : 4.875°N, -74.635°O
+  Radio       : 3 km (radio de vuelo de las abejas)
+  Tile        : 18NVJ (Cundinamarca Central)
+
+CATÁLOGO SENTINEL-2
+  Imágenes disponibles (Ene 2024 – May 2025) : 103
+  Imágenes aptas (< 40% nubosidad)           : 49
+  Resolución espacial                        : 10 m/píxel
+  Frecuencia de revisita                     : ~5 días
+
+NDVI — ANÁLISIS DE VEGETACIÓN (promedio radio 3 km)
+  NDVI mínimo   : 0.313  (Dec 2025)
+  NDVI máximo   : 0.817  (Jun 2024)
+  NDVI promedio : 0.596
+  Meses de datos: 29
+
+PERÍODOS DE FLORACIÓN DETECTADOS (NDVI ≥ 0.6)
+  → February 2024    NDVI = 0.618  (Activa)
+  → May 2024         NDVI = 0.773  (⚠ ALERTA ALTA)
+  → June 2024        NDVI = 0.817  (⚠ ALERTA ALTA)
+  → August 2024      NDVI = 0.669  (Activa)
+  → October 2024     NDVI = 0.697  (⚠ ALERTA ALTA)
+  → December 2024    NDVI = 0.701  (⚠ ALERTA ALTA)
+  → May 2025         NDVI = 0.787  (⚠ ALERTA ALTA)
+  → August 2025      NDVI = 0.732  (⚠ ALERTA ALTA)
+  → September 2025   NDVI = 0.675  (Activa)
+  → October 2025     NDVI = 0.690  (⚠ ALERTA ALTA)
+  → February 2026    NDVI = 0.782  (⚠ ALERTA ALTA)
+  → May 2026         NDVI = 0.667  (Activa)
+
+PERÍODOS DE ESCASEZ PROBABLE (NDVI < 0.48)
+  → January 2024     NDVI = 0.474  (Recomendar alimentación suplementaria)
+  → January 2025     NDVI = 0.437  (Recomendar alimentación suplementaria)
+  → February 2025    NDVI = 0.442  (Recomendar alimentación suplementaria)
+  → April 2025       NDVI = 0.379  (Recomendar alimentación suplementaria)
+  → December 2025    NDVI = 0.313  (Recomendar alimentación suplementaria)
+  → January 2026     NDVI = 0.319  (Recomendar alimentación suplementaria)
+
+FUENTES DE DATOS
+  Satélite    : Sentinel-2A/2B (ESA / Programa Copernicus)
+  Colección   : SENTINEL2_L2A (superficie con corrección atmosférica)
+  Banda NIR   : B08 (842 nm) | Banda Rojo: B04 (665 nm)
+  NDVI        : (B08 - B04) / (B08 + B04)
+  Portal      : https://dataspace.copernicus.eu
+  Procesado   : openEO / CDSE
+
+NOTA: Datos de NDVI obtenidos directamente de los servidores
+de Copernicus Data Space sobre las coordenadas exactas del
+apiario piloto AbejaVerde·EO. Umbrales calibrados con
+conocimiento local de floraciones en Cundinamarca.
+═══════════════════════════════════════════════════════════
