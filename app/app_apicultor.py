@@ -230,14 +230,14 @@ with pag1:
     """, unsafe_allow_html=True)
 
     # MARGEN DE MANIOBRA
-    st.markdown(f"""
-    <div class="{mdm['clase']} mdm-box">
+    dias_txt = f"{mdm['dias']} días" if mdm['dias'] > 0 else "⚡ AHORA"
+    mdm_html = f"""<div class="{mdm['clase']} mdm-box">
       <div style="font-size:2rem;margin-bottom:4px">{mdm['emoji']}</div>
       <div style="font-size:18px;font-weight:600;margin-bottom:6px">{mdm['titulo']}</div>
-      {"<div style='font-size:2.5rem;font-weight:700;margin-bottom:6px'>" + str(mdm['dias']) + " días</div>" if mdm['dias'] > 0 else "<div style='font-size:1.4rem;font-weight:700;margin-bottom:6px'>⚡ AHORA</div>"}
+      <div style="font-size:2.5rem;font-weight:700;margin-bottom:6px">{dias_txt}</div>
       <div style="font-size:14px;line-height:1.7;max-width:400px;margin:0 auto">{mdm['desc']}</div>
-    </div>
-    """, unsafe_allow_html=True)
+    </div>"""
+    st.markdown(mdm_html, unsafe_allow_html=True)
 
     # DESACOPLAMIENTO ECOLÓGICO
     st.markdown("""
