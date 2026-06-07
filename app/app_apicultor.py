@@ -64,9 +64,9 @@ st.markdown("""
 
 # ── DATOS ─────────────────────────────────────────────────────────────────────
 MUNICIPIOS = {
-    "San Juan de Rioseco ⭐ Piloto":{"ira":32,"ita":35,"iba":31,"titulo":"Riesgo moderado",
+    "San Juan de Rioseco ⭐ Piloto":{"ira":32,"ita":35,"iba":13,"titulo":"Riesgo moderado",
         "desc":"Floración activa mayo 2026 (NDVI 0.667). Monitoree el agua.",
-        "chips":["🌿 Floración activa","🛰️ ITA 35","👩‍🌾 IBA 31"],"real":True},
+        "chips":["🌿 Floración activa","🛰️ ITA 35","👩‍🌾 IBA 13"],"real":True},
     "Guaduas":{"ira":28,"ita":28,"iba":22,"titulo":"Condiciones favorables",
         "desc":"Buen mes. Monitoreo rutinario.","chips":["🌿 Vegetación alta"],"real":False},
     "Chaguaní":{"ira":52,"ita":55,"iba":48,"titulo":"Riesgo moderado-alto",
@@ -144,9 +144,9 @@ def calcular_mdm(ita, iba):
                 "emoji":"✅","titulo":"Margen Amplio — Ecosistema Acoplado",
                 "desc":"El territorio y la colmena están alineados. Puede mantener el cronograma de inspección estándar (15-30 días)."}
     if delta == 1:
-        return {"estado":"CUENTA_REGRESIVA","dias":7,"clase":"mdm-amarillo",
+        return {"estado":"CUENTA_REGRESIVA","dias":15,"clase":"mdm-amarillo",
                 "emoji":"⏳","titulo":"Cuenta Regresiva — Inercia Nutricional",
-                "desc":"El satélite detectó más estrés que la colmena. Las abejas están consumiendo las reservas de miel. Inspeccione en 5-7 días antes de que se agoten."}
+                "desc":"El satélite detectó más estrés que la colmena. Las abejas están consumiendo las reservas de miel. Inspeccione en los próximos 15 días antes de que se agoten."}
     if delta == 2:
         return {"estado":"CUENTA_REGRESIVA_CRITICA","dias":3,"clase":"mdm-rojo",
                 "emoji":"⚠️","titulo":"Cuenta Regresiva Crítica",
