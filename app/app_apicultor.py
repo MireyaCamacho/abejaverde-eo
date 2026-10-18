@@ -10,6 +10,15 @@ sys.path.insert(0, str(ROOT))
 import pandas as pd
 import streamlit as st
 
+try:  # credenciales locales en .env (en Streamlit Cloud llegan como Secrets)
+    from dotenv import load_dotenv
+    load_dotenv(ROOT / ".env")
+except ImportError:
+    pass
+
+from src.alertas.semaforo import ResultadoSemaforo, SEMAFORO_DESDE_MDM
+from src.alertas.notificaciones import enviar_semaforo
+
 st.set_page_config(page_title="AbejaVerde·EO", page_icon="🐝", layout="centered")
 
 st.markdown("""
@@ -272,6 +281,41 @@ with pag1:
     with c1: st.metric("Temp. interior", f"{iot['temp_interior']}°C")
     with c2: st.metric("Humedad", f"{iot['hum_interior']:.0f}%")
     with c3: st.metric("Batería", f"{iot['bateria_v']:.2f}V")
+
+    # ENVÍO DE LA ALERTA POR WHATSAPP O CORREO (MVP Acelera Lab)
+    semaforo_hoy = SEMAFORO_DESDE_MDM.get(mdm["estado"], "VERDE")
+    with st.expander(f"📲 Recibir esta alerta por WhatsApp o correo · Semáforo {semaforo_hoy}"):
+        st.caption("La alerta llega con el color del semáforo y la acción recomendada. "
+                   "Solo la enviamos si usted autoriza el uso de sus datos (Ley 1581 de 2012).")
+        canal_sel = st.radio("¿Por dónde quiere recibirla?", ["WhatsApp", "Correo", "Ambos"],
+                             horizontal=True, key="canal_alerta")
+        tel_sel = st.text_input("Celular (WhatsApp)", placeholder="3001234567",
+                                disabled=canal_sel == "Correo", key="tel_alerta")
+        mail_sel = st.text_input("Correo electrónico", placeholder="apicultor@correo.com",
+                                 disabled=canal_sel == "WhatsApp", key="mail_alerta")
+        autoriza_sel = st.checkbox(
+            "Autorizo a AbejaVerde·EO a usar mi celular, mi correo y la ubicación de mi apiario "
+            "solo para enviarme alertas apícolas. Puedo revocar esta autorización cuando quiera.",
+            key="autoriza_alerta")
+        if st.button("Enviar alerta", type="primary", disabled=not autoriza_sel):
+            resultado_sem = ResultadoSemaforo(
+                apiario_id="API-SJR-01" if muni["real"] else "DEMO",
+                municipio=st.session_state.muni.replace(" ⭐ Piloto", ""),
+                ndvi=0.667 if muni["real"] else float("nan"),
+                semaforo=semaforo_hoy,
+                accion=f'{mdm["titulo"]}. {mdm["desc"]}',
+            )
+            envio = enviar_semaforo(resultado_sem, canal=canal_sel, telefono=tel_sel,
+                                    email=mail_sel, autoriza_datos=autoriza_sel)
+            (st.success if envio["enviado"] else st.error)(envio["detalle"])
+        with st.popover("Ver cómo se ve el mensaje"):
+            st.markdown(ResultadoSemaforo(
+                apiario_id="API-SJR-01" if muni["real"] else "DEMO",
+                municipio=st.session_state.muni.replace(" ⭐ Piloto", ""),
+                ndvi=0.667 if muni["real"] else float("nan"),
+                semaforo=semaforo_hoy,
+                accion=f'{mdm["titulo"]}. {mdm["desc"]}',
+            ).texto_whatsapp().replace("\n", "  \n"))
 
 # ═══════════════════════════════════════════════════════════════════
 # PÁGINA 2 — BITÁCORA SATELITAL

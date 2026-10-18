@@ -39,6 +39,27 @@ BEEP Base (referencia biológica colmenas)
 
 ---
 
+## 🏁 MVP Acelera Lab — semáforo de 4 colores y alertas por WhatsApp o correo
+
+Finalista de **Acelera Lab** (Gobernación de Cundinamarca · OEI). El MVP cruza el NDVI de
+Copernicus con una bitácora de 3 preguntas del apicultor (población, reservas de miel y
+polen, postura de la reina) y envía un semáforo **VERDE · AMARILLO · NARANJA · ROJO** con la
+acción de la semana por **WhatsApp, correo o ambos**, solo con autorización de datos
+(Ley 1581 de 2012).
+
+- Guía completa (Antigravity, Earth Engine, Sheets, Apps Script, AppSheet, Looker Studio):
+  [`mvp_aceleralab/README.md`](mvp_aceleralab/README.md)
+- Skill del agente: [`.agents/skills/abejaverde-riesgo-apicola/SKILL.md`](.agents/skills/abejaverde-riesgo-apicola/SKILL.md)
+- Reglas en Python: `src/alertas/semaforo.py` · envío por canal: `src/alertas/notificaciones.py`
+- En la app: pestaña **Diagnóstico → 📲 Recibir esta alerta por WhatsApp o correo**
+
+```bash
+python -m pytest tests/test_semaforo.py -v
+python -m src.alertas.enviar_alertas_semanales mvp_aceleralab/sheets/BD_AbejaVerde_EO_Bitacora_Colmenas.csv --simular --sin-gemini
+```
+
+---
+
 ## Instalación
 
 ```bash

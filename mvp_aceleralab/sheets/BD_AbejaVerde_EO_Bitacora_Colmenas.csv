@@ -1,0 +1,5 @@
+ID_Apiario,Municipio,Coordenadas_GPS,Email_Apicultor,NDVI_Satelite_Copernicus,Clima_Territorio,P1_Fuerza_Poblacion,P2_Reservas_Miel_Polen,P3_Postura_Reina,Semaforo_IA,Accion_Recomendada_IA,Telefono_WhatsApp,Canal_Preferido,Autoriza_Datos_Ley1581,Fecha_Ultima_Alerta,Estado_Envio
+API-01,Pacho,"5.1326, -74.1602",tu_correo@ejemplo.com,0.28 (Floración Muy Baja),Sequía / Helada,Alta (8 cuadros llenos),Bajas (menos de 2 cuadros),Activa,,,3000000000,Ambos,SI,,
+API-02,Fusagasugá,"4.3365, -74.3638",tu_correo@ejemplo.com,0.74 (Floración Óptima),Templado húmedo,Media (5 cuadros),Medias (4 cuadros),Activa,,,,Correo,SI,,
+API-03,San Juan de Rioseco,"4.875, -74.635",tu_correo@ejemplo.com,0.31 (Floración Baja),Seco,Media (5 cuadros),Medias (4 cuadros),Activa,,,3000000000,WhatsApp,SI,,
+API-04,La Mesa,"4.6337, -74.4617",tu_correo@ejemplo.com,0.70 (Floración Buena),Templado,Baja (3 cuadros),Medias (4 cuadros),Detenida,,,,Correo,NO,,
