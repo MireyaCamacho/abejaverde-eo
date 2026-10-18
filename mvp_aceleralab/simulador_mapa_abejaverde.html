@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AbejaVerde·EO — Simulador del semáforo</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+  :root{--verde:#8CC98C;--amarillo:#F2C94C;--naranja:#F2994A;--rojo:#E06A5A;--oscuro:#1F3A2B;--crema:#F7F3E8;--miel:#A0700E}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--crema);color:var(--oscuro)}
+  header{background:var(--oscuro);color:var(--crema);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+  header h1{margin:0;font-family:Georgia,serif;font-size:24px}
+  header p{margin:2px 0 0;color:#C9D6CC;font-size:14px}
+  main{display:grid;grid-template-columns:1.3fr 1fr;gap:16px;padding:16px 24px;max-width:1400px;margin:0 auto}
+  @media(max-width:900px){main{grid-template-columns:1fr;padding:12px 16px}}
+  .card{background:#FFFDF7;border:1px solid #D9D2BF;border-radius:14px;padding:16px;overflow-x:auto}
+  h2{font-size:17px;margin:0 0 12px}
+  table{border-collapse:collapse;width:100%;font-size:13px;min-width:760px}
+  th,td{padding:7px 6px;border-bottom:1px solid #E6E0CF;text-align:left;vertical-align:middle}
+  th{font-size:12px;color:#4A5A4F}
+  tr.sel{background:#F3EFE2}
+  input[type=number]{width:64px}
+  select,input{font-size:13px}
+  .pill{display:inline-block;padding:4px 10px;border-radius:999px;font-weight:700;font-size:12px;color:#1F2A1F}
+  #mapa{height:340px;border-radius:12px}
+  #sinmapa{display:none;padding:24px;text-align:center;color:#4A5A4F}
+  .wa{background:#EAF4E4;border-radius:12px;padding:14px;white-space:pre-wrap;font-size:14px;line-height:1.45}
+  .wa-h{background:#2F6B4F;color:#fff;border-radius:12px 12px 0 0;padding:10px 14px;font-weight:700;font-size:14px}
+  .wa-box{border:8px solid var(--oscuro);border-radius:28px;overflow:hidden;background:#FFFDF7}
+  .wa-box .wa{margin:12px}
+  button{background:var(--oscuro);color:var(--crema);border:0;border-radius:10px;padding:10px 16px;font-weight:700;cursor:pointer}
+  button.sec{background:#E9EEE4;color:var(--oscuro)}
+  #log{font-family:Consolas,monospace;font-size:12px;background:#F3EFE2;border-radius:10px;padding:10px;min-height:80px;white-space:pre-wrap}
+  .leyenda{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+  .nota{font-size:12px;color:#4A5A4F;margin-top:8px}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>🐝 AbejaVerde·EO — Simulador del semáforo</h1>
+    <p>El satélite mira el supermercado; el apicultor mira la despensa. Mismas reglas que la Skill, Apps Script y la app.</p>
+  </div>
+  <div class="leyenda">
+    <span class="pill" style="background:var(--verde)">VERDE · Equilibrio</span>
+    <span class="pill" style="background:var(--amarillo)">AMARILLO · Vigilancia</span>
+    <span class="pill" style="background:var(--naranja)">NARANJA · Alerta preventiva</span>
+    <span class="pill" style="background:var(--rojo)">ROJO · Riesgo crítico</span>
+  </div>
+</header>
+
+<main>
+  <section class="card">
+    <h2>Bitácora_Colmenas (edite los valores y vea el semáforo en vivo)</h2>
+    <table>
+      <thead><tr>
+        <th>Apiario</th><th>NDVI</th><th>Clima</th><th>P1 Población</th><th>P2 Reservas</th><th>P3 Reina</th>
+        <th>Canal</th><th>Autoriza</th><th>Semáforo</th>
+      </tr></thead>
+      <tbody id="filas"></tbody>
+    </table>
+    <p class="nota">Haga clic en una fila para ver la alerta. Los casos API-01 (ROJO) y API-02 (VERDE) son los de la prueba en vivo del Manual Técnico.</p>
+    <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+      <button id="btnEnviar">Simular envío semanal</button>
+      <button class="sec" id="btnReset">Restaurar datos de prueba</button>
+    </div>
+    <h2 style="margin-top:16px">Registro de envíos (simulado)</h2>
+    <div id="log">Aún no se ha simulado ningún envío.</div>
+  </section>
+
+  <section style="display:flex;flex-direction:column;gap:16px">
+    <div class="card">
+      <h2>Mapa territorial de riesgo apícola</h2>
+      <div id="mapa"></div>
+      <div id="sinmapa">El mapa necesita conexión a internet. El semáforo funciona igual.</div>
+    </div>
+    <div class="card">
+      <h2 id="tituloPrev">Alerta que recibe el apicultor</h2>
+      <div class="wa-box">
+        <div class="wa-h" id="canalPrev">WhatsApp · AbejaVerde·EO</div>
+        <div class="wa" id="prev"></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+// ── Reglas (idénticas a src/alertas/semaforo.py y motor_alertas_abejaverde.gs) ──
+const UMBRAL = {CRITICO: 0.35, BAJO: 0.50, OPTIMO: 0.60};
+const HEX = {ROJO:'#E06A5A', NARANJA:'#F2994A', AMARILLO:'#F2C94C', VERDE:'#8CC98C'};
+const DESC = {ROJO:'Riesgo crítico', NARANJA:'Alerta preventiva', AMARILLO:'Vigilancia operativa', VERDE:'Equilibrio óptimo'};
+const EMOJI = {ROJO:'🔴', NARANJA:'🟠', AMARILLO:'🟡', VERDE:'🟢'};
+const ACCION = {
+  ROJO: 'Alimente hoy con jarabe de azúcar 1:1 (1 litro por colmena) y torta proteica; asegure agua limpia cerca y revise en 48 horas. Si necesita apoyo, avise al técnico.',
+  NARANJA: 'La floración está bajando: prepare jarabe 1:1 y torta proteica para la próxima visita, revise reservas en cada colmena y asegure agua cerca del apiario.',
+  AMARILLO: 'Hay flores, pero la colmena está débil: revise la postura de la reina y la sanidad de la cría, reduzca la piquera si hace frío y una colmenas débiles si es necesario.',
+  VERDE: 'Todo en orden: mantenga la revisión habitual y evalúe colocar alza melaria si los cuadros de miel están llenos.'
+};
+
+function semaforo(ndvi, p1, p2, p3, clima) {
+  const lluvia = /lluvi/i.test(clima) && /(intens|fuert|torrenc|persist)/i.test(clima);
+  if (ndvi < UMBRAL.CRITICO && p2 === 'BAJA' && (p1 !== 'BAJA' || p3 === 'INACTIVA')) return 'ROJO';
+  if (ndvi < UMBRAL.CRITICO) return 'NARANJA';
+  if (ndvi < UMBRAL.BAJO && (p2 === 'BAJA' || p3 === 'INACTIVA')) return 'NARANJA';
+  if (lluvia) return 'NARANJA';
+  if (p1 === 'BAJA' || p2 === 'BAJA' || p3 === 'INACTIVA') return 'AMARILLO';
+  if (ndvi < UMBRAL.OPTIMO) return 'AMARILLO';
+  return 'VERDE';
+}
+
+const PRUEBA = [
+  {id:'API-01', muni:'Pacho', lat:5.1326, lon:-74.1602, ndvi:0.28, clima:'Sequía / Helada', p1:'ALTA', p2:'BAJA', p3:'ACTIVA', canal:'Ambos', autoriza:true},
+  {id:'API-02', muni:'Fusagasugá', lat:4.3365, lon:-74.3638, ndvi:0.74, clima:'Templado húmedo', p1:'MEDIA', p2:'MEDIA', p3:'ACTIVA', canal:'Correo', autoriza:true},
+  {id:'API-03', muni:'San Juan de Rioseco', lat:4.875, lon:-74.635, ndvi:0.31, clima:'Seco', p1:'MEDIA', p2:'MEDIA', p3:'ACTIVA', canal:'WhatsApp', autoriza:true},
+  {id:'API-04', muni:'La Mesa', lat:4.6337, lon:-74.4617, ndvi:0.70, clima:'Templado', p1:'BAJA', p2:'MEDIA', p3:'INACTIVA', canal:'Correo', autoriza:false}
+];
+let datos = JSON.parse(JSON.stringify(PRUEBA));
+let seleccionado = 0;
+
+const opt = (vals, actual) => vals.map(([v, t]) => `<option value="${v}" ${v === actual ? 'selected' : ''}>${t}</option>`).join('');
+
+function pintarTabla() {
+  const tb = document.getElementById('filas');
+  tb.innerHTML = datos.map((d, i) => {
+    const c = semaforo(d.ndvi, d.p1, d.p2, d.p3, d.clima);
+    return `<tr data-i="${i}" class="${i === seleccionado ? 'sel' : ''}">
+      <td><b>${d.id}</b><br><small>${d.muni}</small></td>
+      <td><input type="number" step="0.01" min="0" max="1" value="${d.ndvi}" data-k="ndvi"></td>
+      <td><input value="${d.clima}" data-k="clima" style="width:92px"></td>
+      <td><select data-k="p1">${opt([['ALTA','Alta'],['MEDIA','Media'],['BAJA','Baja']], d.p1)}</select></td>
+      <td><select data-k="p2">${opt([['ALTA','Altas'],['MEDIA','Medias'],['BAJA','Bajas']], d.p2)}</select></td>
+      <td><select data-k="p3">${opt([['ACTIVA','Activa'],['INACTIVA','Detenida']], d.p3)}</select></td>
+      <td><select data-k="canal">${opt([['WhatsApp','WhatsApp'],['Correo','Correo'],['Ambos','Ambos']], d.canal)}</select></td>
+      <td><input type="checkbox" data-k="autoriza" ${d.autoriza ? 'checked' : ''}></td>
+      <td><span class="pill" style="background:${HEX[c]}">${c}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+function pintarPrevia() {
+  const d = datos[seleccionado];
+  const c = semaforo(d.ndvi, d.p1, d.p2, d.p3, d.clima);
+  document.getElementById('canalPrev').textContent =
+    (d.canal === 'Correo' ? 'Correo' : d.canal === 'Ambos' ? 'WhatsApp + correo' : 'WhatsApp') + ' · AbejaVerde·EO';
+  document.getElementById('prev').textContent = d.autoriza
+    ? `${EMOJI[c]} AbejaVerde·EO – Apiario ${d.id} (${d.muni})\nSemáforo: ${c} – ${DESC[c]}\n\n📋 Acción recomendada esta semana:\n${ACCION[c]}\n\n🛰️ NDVI Copernicus del entorno: ${Number(d.ndvi).toFixed(2)}`
+    : `Semáforo calculado: ${c}.\n\nNo se envía: el apicultor no ha autorizado el tratamiento de sus datos (Ley 1581 de 2012).`;
+}
+
+// Mapa
+let mapa = null, capa = null;
+function pintarMapa() {
+  if (!mapa) return;
+  capa.clearLayers();
+  datos.forEach((d, i) => {
+    const c = semaforo(d.ndvi, d.p1, d.p2, d.p3, d.clima);
+    L.circleMarker([d.lat, d.lon], {radius: 13, color: '#1F3A2B', weight: 2, fillColor: HEX[c], fillOpacity: .95})
+      .bindTooltip(`${d.id} · ${d.muni}<br><b>${c}</b> · NDVI ${Number(d.ndvi).toFixed(2)}`)
+      .on('click', () => { seleccionado = i; refrescar(); })
+      .addTo(capa);
+  });
+}
+try {
+  mapa = L.map('mapa').setView([4.75, -74.4], 8);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom: 18, attribution: '© OpenStreetMap'}).addTo(mapa);
+  capa = L.layerGroup().addTo(mapa);
+} catch (e) {
+  document.getElementById('mapa').style.display = 'none';
+  document.getElementById('sinmapa').style.display = 'block';
+}
+
+function refrescar() { pintarTabla(); pintarPrevia(); pintarMapa(); }
+
+document.getElementById('filas').addEventListener('input', (e) => {
+  const tr = e.target.closest('tr'); const k = e.target.dataset.k; if (!tr || !k) return;
+  const d = datos[+tr.dataset.i];
+  d[k] = k === 'ndvi' ? parseFloat(e.target.value || 0) : k === 'autoriza' ? e.target.checked : e.target.value;
+  seleccionado = +tr.dataset.i;
+  pintarPrevia(); pintarMapa();
+  tr.querySelector('td:last-child').innerHTML =
+    `<span class="pill" style="background:${HEX[semaforo(d.ndvi, d.p1, d.p2, d.p3, d.clima)]}">${semaforo(d.ndvi, d.p1, d.p2, d.p3, d.clima)}</span>`;
+});
+document.getElementById('filas').addEventListener('click', (e) => {
+  const tr = e.target.closest('tr');
+  if (!tr || ['INPUT', 'SELECT'].includes(e.target.tagName)) return;
+  seleccionado = +tr.dataset.i; refrescar();
+});
+document.getElementById('btnEnviar').addEventListener('click', () => {
+  const hora = new Date().toLocaleString('es-CO');
+  document.getElementById('log').textContent = datos.map((d) => {
+    const c = semaforo(d.ndvi, d.p1, d.p2, d.p3, d.clima);
+    if (!d.autoriza) return `${d.id} ${c.padEnd(8)} → No enviado: falta autorización Ley 1581`;
+    const canales = d.canal === 'Ambos' ? 'WhatsApp: OK · Correo: OK' : `${d.canal}: OK`;
+    return `${d.id} ${c.padEnd(8)} → ${canales}`;
+  }).join('\n') + `\n\n(Simulación del ${hora}: el envío real lo hacen motor_alertas_abejaverde.gs o la app)`;
+});
+document.getElementById('btnReset').addEventListener('click', () => {
+  datos = JSON.parse(JSON.stringify(PRUEBA)); seleccionado = 0; refrescar();
+  document.getElementById('log').textContent = 'Aún no se ha simulado ningún envío.';
+});
+refrescar();
+</script>
+</body>
+</html>
